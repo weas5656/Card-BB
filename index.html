@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มการ์ดดูดวง</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin: 30px 0;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 220px;
+            height: 320px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-back {
+            background: linear-gradient(45deg, #4b0082, #8b008b);
+            color: white;
+            font-size: 1.2em;
+            padding: 20px;
+        }
+
+        .card-front {
+            background: linear-gradient(45deg, #ffd700, #fff);
+            color: #333;
+            transform: rotateY(180deg);
+            position: relative;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 65%;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .card-content {
+            padding: 15px;
+            height: 35%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(45deg, #ffd700, #fff);
+        }
+
+        .card-emoji {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4b0082;
+        }
+
+        .card-description {
+            font-size: 0.8em;
+            text-align: center;
+            line-height: 1.3;
+            color: #666;
+        }
+
+        .no-image {
+            width: 100%;
+            height: 65%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            color: white;
+        }
+
+        .buttons {
+            margin: 30px 0;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .fortune-text {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            line-height: 1.6;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .sparkle {
+            display: inline-block;
+            animation: sparkle 1.5s infinite;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .card {
+                width: 180px;
+                height: 260px;
+            }
+            
+            .card-title {
+                font-size: 1.1em;
+            }
+            
+            .card-description {
+                font-size: 0.75em;
+            }
+            
+            button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 สุ่มการ์ดดูดวง <span class="sparkle">✨</span></h1>
+        
+        <div class="card-container">
+            <div class="card" id="tarotCard">
+                <div class="card-face card-back">
+                    <div class="card-emoji">🃏</div>
+                    <div>คลิกเพื่อเปิดการ์ด</div>
+                </div>
+                <div class="card-face card-front" id="cardFront">
+                    <!-- เนื้อหาการ์ดจะถูกสร้างที่นี่ -->
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button onclick="drawCard()">🎯 สุ่มการ์ดใหม่</button>
+            <button onclick="resetCard()">🔄 รีเซ็ต</button>
+        </div>
+
+        <div class="fortune-text" id="fortuneText" style="display: none;">
+            <!-- ข้อความดูดวงจะแสดงที่นี่ -->
+        </div>
+    </div>
+
+    <script>
+        const cards = [
+            {
+                title: "MISS",
+                description: "การ์ดใบนี้บ่งบอกว่าเค้ากำลังคิดถึงอ้วนมากๆ",
+                fortune: "เค้าคิดถึงอ้วนๆมากจริงๆถึงอ้วนจะไม่กลับมาก็ไม่เป็นไรเลยเค้าเข้าใจทุกอย่างดีแค่ตอนนี้เค้ายังยอมรับไม่ได้จริงๆ",
+                image: "miss.jpg"
+            },
+            {
+                title: "LOVE",
+                description: "การ์ดใบนี้จะบอกให้รู้ว่าเค้ารักอ้วนๆมากนะค้าบบ",
+                fortune: "เค้ารักอ้วนๆมากนะค้าบบไม่ว่าอ้วนจะทำอะไรเค้าสัญญาว่ารอบนี้เค้าจะซัพพอตอ้วนๆทุกอย่าง",
+                image: "love.jpg"
+            },
+            {
+                title: "Happy",
+                description: "การ์ดใบนี้จะอวยพรให้อ้วนๆมีความสุขในทุกๆวันเลยย",
+                fortune: "ขอให้อ้วนมีความสุขมากๆสุขภาพแข็งแรงพบเจอแต่เรื่องดีๆนะค้าบบ",
+                image: "Happy.jpg"
+            },
+            {
+                title: "พรแห่งรักก",
+                description: "แคปเก็บไว้",
+                fortune: "ถ้าอ้วนส่งการ์ดนี้ให้เค้า อ้วนจะขออะไรก็ได้",
+                image: "free.jpg"
+            },
+            {
+                title: "กินแซ่บ",
+                description: "การ์ดนี้จะทำให้อ้วนกินข้าวได้เยอะๆ",
+                fortune: "ขอให้อ้วนๆกินข้าวให้อร่อยๆ กินเยอะๆกินให้มีความสุขค้าบบ",
+                image: "Eat.jpg"
+            },
+            {
+                title: "ของขวัญสุดพิเศษ", 
+                description: "การ์ดนี้ไม่มีอะไรมากแค่อยากจะบอกว่า",
+                fortune: "เค้านอนกอดนอนจุ๊บมันทุกคืนเลยย เค้าคิดถึงอ้วนมากๆนะค้าบบ",
+                image: "gift.jpg"
+            },
+            {
+                title: "Strong", 
+                description: "การ์ดนี้จะทำให้อ้วนๆเข้มแข็ง",
+                fortune: "เค้ารู้ว่าตอนนี้เค้าอ่อนแอมากแต่เค้าขอให้อ้วนๆเข้มแข็งไม่ว่าจะเจอกับอะไรก็ตามขอให้อ้วนผ่านทุกอย่างไปได้แม้ในวันที่อ้วนๆไม่ได้เลือกเค้าก็ตาม",
+                image: "cry.jpg"
+            },
+            {
+                title: "Care", 
+                description: "การ์ดนี้จะดูแลอ้วนๆ",
+                fortune: "เค้าจะคอยดูแลอ้วนๆเท่าที่ทำได้ในตอนนี้และในอนาคตนะค้าบบไม่ว่าจะในสถานะไหนก็ตาม",
+                image: "care.jpg"
+            },
+            {
+                title: "MISS2", 
+                description: "การ์ดนี้ไม่มีอะไรแต่เค้าคิดถึงอ้วนมากๆ",
+                fortune: "เค้าอยากอยู่กับอ้วนไปตลอดชีวิตเลยนะค้าบบ ถึงอ้วนจะไม่ได้อยากอยู่กับเค้าเหมือนเดิมอีกแล้วก็ตาม",
+                image: "call.jpg"
+            }
+        ];
+
+        let currentCard = null;
+        let isCardFlipped = false;
+
+        function drawCard() {
+            const randomIndex = Math.floor(Math.random() * cards.length);
+            currentCard = cards[randomIndex];
+            
+            // รีเซ็ตการ์ดก่อน
+            const card = document.getElementById('tarotCard');
+            card.classList.remove('flipped');
+            document.getElementById('fortuneText').style.display = 'none';
+            
+            // อัพเดทเนื้อหาการ์ด
+            const cardFront = document.getElementById('cardFront');
+            
+            cardFront.innerHTML = `
+                <img src="${currentCard.image}" alt="${currentCard.title}" class="card-image">
+                <div class="card-content">
+                    <div class="card-title">${currentCard.title}</div>
+                    <div class="card-description">${currentCard.description}</div>
+                </div>
+            `;
+            
+            // เปิดการ์ดหลังจาก delay เล็กน้อย
+            setTimeout(() => {
+                card.classList.add('flipped');
+                isCardFlipped = true;
+                
+                // แสดงข้อความดูดวงหลังจากเปิดการ์ด
+                setTimeout(() => {
+                    const fortuneText = document.getElementById('fortuneText');
+                    fortuneText.innerHTML = `
+                        <strong>🔮 คำอธิบาย:</strong><br>
+                        ${currentCard.fortune}
+                    `;
+                    fortuneText.style.display = 'block';
+                }, 300);
+            }, 100);
+        }
+
+        function resetCard() {
+            const card = document.getElementById('tarotCard');
+            card.classList.remove('flipped');
+            document.getElementById('fortuneText').style.display = 'none';
+            isCardFlipped = false;
+            currentCard = null;
+        }
+
+        // เพิ่มการคลิกที่การ์ดเพื่อเปิด/ปิด
+        document.getElementById('tarotCard').addEventListener('click', function() {
+            if (currentCard) {
+                const card = document.getElementById('tarotCard');
+                if (isCardFlipped) {
+                    card.classList.remove('flipped');
+                    document.getElementById('fortuneText').style.display = 'none';
+                    isCardFlipped = false;
+                } else {
+                    card.classList.add('flipped');
+                    setTimeout(() => {
+                        document.getElementById('fortuneText').style.display = 'block';
+                    }, 300);
+                    isCardFlipped = true;
+                }
+            }
+        });
+
+        // ลบการเปิดการ์ดอัตโนมัติตอนเริ่มต้น
+        // window.addEventListener('load', () => {
+        //     setTimeout(drawCard, 500);
+        // });
+    </script>
+</body>
+</html>
